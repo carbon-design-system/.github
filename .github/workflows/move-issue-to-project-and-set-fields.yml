@@ -14,6 +14,9 @@ on:
         default: ''
         type: string
         required: true
+    secrets:
+      token:
+        required: true
 
 jobs:
   move_to_project_field:
@@ -21,7 +24,7 @@ jobs:
     steps:
       - name: Get project data
         env:
-          GH_TOKEN: ${{ secrets.ADD_TO_PROJECT_SET_FIELD }}
+          GH_TOKEN: ${{ secrets.token }}
         run: |
           gh api graphql -f query='
           query($org: String!, $number: Int!) {
@@ -55,7 +58,7 @@ jobs:
 
       - name: Add issue to project
         env:
-          GH_TOKEN: ${{ secrets.ADD_TO_PROJECT_SET_FIELD }}
+          GH_TOKEN: ${{ secrets.token }}
           ISSUE_ID: ${{ github.event.issue.node_id }}
         # Uses [GitHub CLI](https://cli.github.com/manual/) and the API to add the issue that triggered this workflow to the project. The `jq` flag parses the response to get the ID of the created item.
         run: |
@@ -72,7 +75,7 @@ jobs:
 
       - name: Set field value
         env:
-          GH_TOKEN: ${{ secrets.ADD_TO_PROJECT_SET_FIELD }}
+          GH_TOKEN: ${{ secrets.token }}
         # Sets the value of the `field` to the specified `field_option`.
         run: |
           gh api graphql -f query='
