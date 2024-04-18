@@ -25,16 +25,25 @@ With the combination of this action and creating issue templates that add defaul
 
 ### Example usage
 
+As this workflow is meant to be used when an issue receives a label, the [`issue` event type](https://docs.github.com/en/rest/using-the-rest-api/issue-event-types?apiVersion=2022-11-28#labeled) should be used.
+
 ```yml
-move-ts-issues:
-  if: ${{ github.event.label.name == 'TypeScript' }}
-  uses: carbon-design-system/.github/.github/workflows/move-issue-to-project-and-set-fields.yml
-  with:
-    field: 'Area'
-    field_option: '🟦 Typescript'
-    project_number: '1'
-  secrets:
-    token: ${{ secrets.TOKEN }}
+name: Caller workflow example for triaging issues
+
+on:
+  issues:
+    types: [ labeled ]
+
+jobs:
+  move-ts-issues:
+    if: ${{ github.event.label.name == 'TypeScript' }}
+    uses: carbon-design-system/.github/.github/workflows/move-issue-to-project-and-set-fields.yml
+    with:
+      field: 'Area'
+      field_option: '🟦 Typescript'
+      project_number: '1'
+    secrets:
+      token: ${{ secrets.TOKEN }}
 ```
 
 This workflow will work if an issue has already been added to a project and can move an issue within the same field as long as a valid `field_option` is provided. If the `field_option` input is not included or blank, the action will fail and the issue will not be assigned a field within the project.
